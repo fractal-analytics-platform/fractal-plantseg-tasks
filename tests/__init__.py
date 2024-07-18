@@ -1,7 +1,7 @@
-import plantseg_tasks
 import json
 from pathlib import Path
 
+import plantseg_tasks
 
 PACKAGE = "plantseg_tasks"
 PACKAGE_DIR = Path(plantseg_tasks.__file__).parent

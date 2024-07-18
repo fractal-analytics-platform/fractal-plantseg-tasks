@@ -1,0 +1,620 @@
+{
+  "manifest_version": "2",
+  "task_list": [
+    {
+      "name": "H5 Converter Task",
+      "executable_non_parallel": "convert_h5_to_ome_zarr.py",
+      "meta_non_parallel": {
+        "cpus_per_task": 1,
+        "mem": 4000
+      },
+      "args_schema_non_parallel": {
+        "title": "ConvertH5ToOmeZarr",
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "title": "Input Path",
+            "type": "string",
+            "description": "Input path to the H5 file, or a folder containing H5 files."
+          },
+          "output_dir": {
+            "title": "Output Dir",
+            "type": "string",
+            "description": "Output path to save the OME-Zarr file."
+          },
+          "image_key": {
+            "title": "Image Key",
+            "default": "raw",
+            "type": "string",
+            "description": "The image key in the H5 file where the image is stored."
+          },
+          "label_key": {
+            "title": "Label Key",
+            "type": "string",
+            "description": "The label key in the H5 file where a label/segmentation is stored."
+          },
+          "custom_axis": {
+            "title": "Custom Axis",
+            "allOf": [
+              {
+                "$ref": "#/definitions/CustomAxisInputModel"
+              }
+            ],
+            "description": "Custom axes to add to the OME-Zarr file. This field will override the default axes resolution and units found in the H5 file."
+          },
+          "ome_zarr_parameters": {
+            "title": "OME-Zarr Parameters",
+            "allOf": [
+              {
+                "$ref": "#/definitions/OMEZarrBuilderParams"
+              }
+            ],
+            "description": "Parameters for the OME-Zarr builder."
+          }
+        },
+        "required": [
+          "input_path",
+          "output_dir"
+        ],
+        "additionalProperties": false,
+        "definitions": {
+          "AxisScaleModel": {
+            "title": "AxisScaleModel",
+            "description": "Input model for the axis scale to be used in the conversion.",
+            "type": "object",
+            "properties": {
+              "axis_name": {
+                "title": "Axis Name",
+                "default": "c",
+                "enum": [
+                  "c",
+                  "z",
+                  "y",
+                  "x"
+                ],
+                "type": "string",
+                "description": "The name of the axis, must be one of 'c', 'z', 'y', 'x'."
+              },
+              "scale": {
+                "title": "Scale",
+                "default": 1.0,
+                "minimum": 0.0,
+                "type": "number",
+                "description": "The scale is used to set the resolution of the axis. It must corresponds to the voxel size for that axis."
+              }
+            }
+          },
+          "CustomAxisInputModel": {
+            "title": "CustomAxisInputModel",
+            "description": "Input model for the custom axis to be used in the conversion.",
+            "type": "object",
+            "properties": {
+              "axis": {
+                "title": "Axis",
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/AxisScaleModel"
+                },
+                "description": "The list of axis to be used in the conversion. The order of the axis in the list should be the same as the order of the axis in the image. Must be the same length as the number of axis in the image."
+              },
+              "spatial_units": {
+                "title": "Spatial Units",
+                "default": "micrometer",
+                "enum": [
+                  "angstrom",
+                  "attometer",
+                  "centimeter",
+                  "decimeter",
+                  "exameter",
+                  "femtometer",
+                  "foot",
+                  "gigameter",
+                  "hectometer",
+                  "inch",
+                  "kilometer",
+                  "megameter",
+                  "meter",
+                  "micrometer",
+                  "mile",
+                  "millimeter",
+                  "nanometer",
+                  "parsec",
+                  "petameter",
+                  "picometer",
+                  "terameter",
+                  "yard",
+                  "yoctometer",
+                  "yottameter",
+                  "zeptometer",
+                  "zettameter"
+                ],
+                "type": "string",
+                "description": "The spatial units of the axis."
+              },
+              "channel_names": {
+                "title": "Channel Names",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The list of channel names. Must be the same length as the number of channels in the image."
+              }
+            }
+          },
+          "OMEZarrBuilderParams": {
+            "title": "OMEZarrBuilderParams",
+            "description": "Parameters for the OME-Zarr builder.",
+            "type": "object",
+            "properties": {
+              "number_multiscale": {
+                "title": "Number Multiscale",
+                "default": 4,
+                "minimum": 0,
+                "type": "integer",
+                "description": "The number of multiscale levels to create. Default is 4."
+              },
+              "scaling_factor_XY": {
+                "title": "Scaling Factor XY",
+                "default": 2.0,
+                "minimum": 1.0,
+                "maximum": 10.0,
+                "type": "number",
+                "description": "The factor to downsample the XY plane. Default is 2.0, meaning every layer is half the size over XY."
+              },
+              "scaling_factor_Z": {
+                "title": "Scaling Factor Z",
+                "default": 1.0,
+                "minimum": 1.0,
+                "maximum": 10.0,
+                "type": "number",
+                "description": "The factor to downsample the Z plane. Default is 1.0, no scaling on Z."
+              },
+              "create_all_ome_axis": {
+                "title": "Create All Ome Axis",
+                "default": true,
+                "type": "boolean",
+                "description": "Whether to create all OME axis. Default is True, meaning that missing axis will be created with a sigleton dimension."
+              }
+            }
+          }
+        }
+      },
+      "docs_info": "## convert_h5_to_ome_zarr\nH5 to OME-Zarr converter task.\n"
+    },
+    {
+      "name": "Tiff Converter Task",
+      "executable_non_parallel": "convert_tiff_to_ome_zarr.py",
+      "meta_non_parallel": {
+        "cpus_per_task": 1,
+        "mem": 4000
+      },
+      "args_schema_non_parallel": {
+        "title": "ConvertTiffToOmeZarr",
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "title": "Input Path",
+            "type": "string",
+            "description": "Input path to the TIFF file, or a folder containing TIFF files."
+          },
+          "output_dir": {
+            "title": "Output Dir",
+            "type": "string",
+            "description": "Output path to save the OME-Zarr file."
+          },
+          "label_path": {
+            "title": "Label Path",
+            "type": "string",
+            "description": "Input path to the label TIFF file, or a folder containing TIFF files."
+          },
+          "custom_axis": {
+            "title": "Custom Axis",
+            "allOf": [
+              {
+                "$ref": "#/definitions/CustomAxisInputModel"
+              }
+            ],
+            "description": "Custom axes to add to the OME-Zarr file. This field will override the default axes resolution and units found in the TIFF file."
+          },
+          "ome_zarr_parameters": {
+            "title": "OME-Zarr Parameters",
+            "allOf": [
+              {
+                "$ref": "#/definitions/OMEZarrBuilderParams"
+              }
+            ],
+            "description": "Parameters for the OME-Zarr builder."
+          }
+        },
+        "required": [
+          "input_path",
+          "output_dir"
+        ],
+        "additionalProperties": false,
+        "definitions": {
+          "AxisScaleModel": {
+            "title": "AxisScaleModel",
+            "description": "Input model for the axis scale to be used in the conversion.",
+            "type": "object",
+            "properties": {
+              "axis_name": {
+                "title": "Axis Name",
+                "default": "c",
+                "enum": [
+                  "c",
+                  "z",
+                  "y",
+                  "x"
+                ],
+                "type": "string",
+                "description": "The name of the axis, must be one of 'c', 'z', 'y', 'x'."
+              },
+              "scale": {
+                "title": "Scale",
+                "default": 1.0,
+                "minimum": 0.0,
+                "type": "number",
+                "description": "The scale is used to set the resolution of the axis. It must corresponds to the voxel size for that axis."
+              }
+            }
+          },
+          "CustomAxisInputModel": {
+            "title": "CustomAxisInputModel",
+            "description": "Input model for the custom axis to be used in the conversion.",
+            "type": "object",
+            "properties": {
+              "axis": {
+                "title": "Axis",
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/AxisScaleModel"
+                },
+                "description": "The list of axis to be used in the conversion. The order of the axis in the list should be the same as the order of the axis in the image. Must be the same length as the number of axis in the image."
+              },
+              "spatial_units": {
+                "title": "Spatial Units",
+                "default": "micrometer",
+                "enum": [
+                  "angstrom",
+                  "attometer",
+                  "centimeter",
+                  "decimeter",
+                  "exameter",
+                  "femtometer",
+                  "foot",
+                  "gigameter",
+                  "hectometer",
+                  "inch",
+                  "kilometer",
+                  "megameter",
+                  "meter",
+                  "micrometer",
+                  "mile",
+                  "millimeter",
+                  "nanometer",
+                  "parsec",
+                  "petameter",
+                  "picometer",
+                  "terameter",
+                  "yard",
+                  "yoctometer",
+                  "yottameter",
+                  "zeptometer",
+                  "zettameter"
+                ],
+                "type": "string",
+                "description": "The spatial units of the axis."
+              },
+              "channel_names": {
+                "title": "Channel Names",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The list of channel names. Must be the same length as the number of channels in the image."
+              }
+            }
+          },
+          "OMEZarrBuilderParams": {
+            "title": "OMEZarrBuilderParams",
+            "description": "Parameters for the OME-Zarr builder.",
+            "type": "object",
+            "properties": {
+              "number_multiscale": {
+                "title": "Number Multiscale",
+                "default": 4,
+                "minimum": 0,
+                "type": "integer",
+                "description": "The number of multiscale levels to create. Default is 4."
+              },
+              "scaling_factor_XY": {
+                "title": "Scaling Factor XY",
+                "default": 2.0,
+                "minimum": 1.0,
+                "maximum": 10.0,
+                "type": "number",
+                "description": "The factor to downsample the XY plane. Default is 2.0, meaning every layer is half the size over XY."
+              },
+              "scaling_factor_Z": {
+                "title": "Scaling Factor Z",
+                "default": 1.0,
+                "minimum": 1.0,
+                "maximum": 10.0,
+                "type": "number",
+                "description": "The factor to downsample the Z plane. Default is 1.0, no scaling on Z."
+              },
+              "create_all_ome_axis": {
+                "title": "Create All Ome Axis",
+                "default": true,
+                "type": "boolean",
+                "description": "Whether to create all OME axis. Default is True, meaning that missing axis will be created with a sigleton dimension."
+              }
+            }
+          }
+        }
+      },
+      "docs_info": "## convert_tiff_to_ome_zarr\nTIFF to OME-Zarr converter task.\n"
+    },
+    {
+      "name": "PlantSeg Workflow Task",
+      "executable_parallel": "plantseg_workflow.py",
+      "meta_parallel": {
+        "cpus_per_task": 1,
+        "mem": 4000
+      },
+      "args_schema_parallel": {
+        "title": "PlantsegWorkflow",
+        "type": "object",
+        "properties": {
+          "predictions_params": {
+            "$ref": "#/definitions/PlantSegPredictionsModel",
+            "title": "Predictions_Params",
+            "description": "Configuration for PlantSeg predictions step."
+          },
+          "segmentation_params": {
+            "$ref": "#/definitions/PlantSegSegmentationModel",
+            "title": "Segmentation_Params",
+            "description": "Configuration for PlantSeg segmentation step."
+          }
+        },
+        "required": [
+          "predictions_params",
+          "segmentation_params"
+        ],
+        "additionalProperties": false,
+        "definitions": {
+          "ModelsPool": {
+            "title": "ModelsPool",
+            "description": "Select if the model is sourced from PlantSegZoo or BioImageIO.",
+            "enum": [
+              "PlantSegZoo",
+              "BioImageIO"
+            ],
+            "type": "string"
+          },
+          "DynamicallyGeneratedModel": {
+            "title": "DynamicallyGeneratedModel",
+            "description": "Select a model from the PlantSeg Zoo.",
+            "enum": [
+              "generic_confocal_3D_unet",
+              "generic_light_sheet_3D_unet",
+              "confocal_3D_unet_ovules_ds1x",
+              "confocal_3D_unet_ovules_ds2x",
+              "confocal_3D_unet_ovules_ds3x",
+              "confocal_2D_unet_ovules_ds2x",
+              "lightsheet_3D_unet_root_ds1x",
+              "lightsheet_3D_unet_root_ds2x",
+              "lightsheet_3D_unet_root_ds3x",
+              "lightsheet_2D_unet_root_ds1x",
+              "lightsheet_3D_unet_root_nuclei_ds1x",
+              "lightsheet_2D_unet_root_nuclei_ds1x",
+              "confocal_2D_unet_sa_meristem_cells",
+              "confocal_3D_unet_sa_meristem_cells",
+              "lightsheet_3D_unet_mouse_embryo_cells",
+              "confocal_3D_unet_mouse_embryo_nuclei",
+              "PlantSeg_3Dnuc_platinum"
+            ],
+            "type": "string"
+          },
+          "DynamicBioIOModels": {
+            "title": "DynamicBioIOModels",
+            "description": "Select a model from the BioImageIO Zoo.",
+            "enum": [
+              "affable-shark",
+              "ambitious-ant",
+              "ambitious-sloth",
+              "amiable-crocodile",
+              "chatty-frog",
+              "conscientious-seashell",
+              "courteous-otter",
+              "creative-panda",
+              "determined-chipmunk",
+              "discreet-rooster",
+              "easy-going-sauropod",
+              "efficient-chipmunk",
+              "emotional-cricket",
+              "fearless-crab",
+              "hiding-blowfish",
+              "hiding-tiger",
+              "humorous-owl",
+              "impartial-shark",
+              "impartial-shrimp",
+              "independent-shrimp",
+              "joyful-deer",
+              "kind-seashell",
+              "laid-back-lobster",
+              "loyal-parrot",
+              "loyal-squid",
+              "modest-octopus",
+              "naked-microbe",
+              "nice-peacock",
+              "noisy-fish",
+              "noisy-hedgehog",
+              "non-judgemental-eagle",
+              "organized-badger",
+              "organized-cricket",
+              "passionate-t-rex",
+              "pioneering-rhino",
+              "placid-llama",
+              "polite-pig",
+              "powerful-chipmunk",
+              "powerful-fish",
+              "shivering-raccoon",
+              "straightforward-crocodile",
+              "thoughtful-turtle",
+              "wild-whale",
+              "willing-hedgehog"
+            ],
+            "type": "string"
+          },
+          "Device": {
+            "title": "Device",
+            "description": "Device to use for CNN predictions.",
+            "enum": [
+              "cpu",
+              "cuda"
+            ],
+            "type": "string"
+          },
+          "PlantSegPredictionsModel": {
+            "title": "PlantSegPredictionsModel",
+            "description": "Input model for PlantSeg predictions.",
+            "type": "object",
+            "properties": {
+              "model_source": {
+                "default": "PlantSegZoo",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/ModelsPool"
+                  }
+                ],
+                "title": "Model_Source",
+                "description": "The source of the model."
+              },
+              "plantsegzoo_name": {
+                "default": "generic_confocal_3D_unet",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/DynamicallyGeneratedModel"
+                  }
+                ],
+                "title": "Plantsegzoo_Name",
+                "description": "The model name from the PlantSeg Zoo."
+              },
+              "bioimageio_name": {
+                "default": "affable-shark",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/DynamicBioIOModels"
+                  }
+                ],
+                "title": "Bioimageio_Name",
+                "description": "The model name from the BioImageIO Zoo."
+              },
+              "device": {
+                "default": "cuda",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/Device"
+                  }
+                ],
+                "title": "Device",
+                "description": "The device to use for predictions."
+              },
+              "patch": {
+                "title": "Patch",
+                "default": [
+                  80,
+                  160,
+                  160
+                ],
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "description": "The patch size."
+              },
+              "save_results": {
+                "title": "Save Results",
+                "default": false,
+                "type": "boolean",
+                "description": "Whether to save the results."
+              },
+              "skip": {
+                "title": "Skip",
+                "default": false,
+                "type": "boolean",
+                "description": "Whether to skip the predictions."
+              }
+            }
+          },
+          "SegmentationType": {
+            "title": "SegmentationType",
+            "description": "PlantSeg segmentation function to use.",
+            "enum": [
+              "gasp",
+              "mutex_ws",
+              "multicut",
+              "dt_watershed"
+            ],
+            "type": "string"
+          },
+          "PlantSegSegmentationModel": {
+            "title": "PlantSegSegmentationModel",
+            "description": "Input model for PlantSeg segmentations.",
+            "type": "object",
+            "properties": {
+              "ws_threshold": {
+                "title": "Ws Threshold",
+                "default": 0.5,
+                "type": "number",
+                "description": "The threshold for the watershed."
+              },
+              "segmentation_type": {
+                "title": "Segmentation Method",
+                "default": "gasp",
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/SegmentationType"
+                  }
+                ],
+                "description": "The segmentation method to use."
+              },
+              "beta": {
+                "title": "Beta",
+                "default": 0.6,
+                "type": "number",
+                "description": "The beta value."
+              },
+              "post_minsize": {
+                "title": "Post Minsize",
+                "default": 100,
+                "type": "integer",
+                "description": "The minimum size."
+              },
+              "skip": {
+                "title": "Skip",
+                "default": false,
+                "type": "boolean",
+                "description": "Whether to skip the segmentation."
+              }
+            }
+          }
+        }
+      },
+      "docs_info": "## plantseg_workflow\nPlantSeg workflow task.\n"
+    }
+  ],
+  "has_args_schemas": true,
+  "args_schema_version": "pydantic_v1"
+}

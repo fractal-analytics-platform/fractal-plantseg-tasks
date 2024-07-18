@@ -1,11 +1,21 @@
 """Contains the list of tasks available to fractal."""
 
-from fractal_tasks_core.dev.task_models import ParallelTask
+from fractal_tasks_core.dev.task_models import NonParallelTask, ParallelTask
 
 TASK_LIST = [
+    NonParallelTask(
+        name="H5 Converter Task",
+        executable="convert_h5_to_ome_zarr.py",
+        meta={"cpus_per_task": 1, "mem": 4000},
+    ),
+    NonParallelTask(
+        name="Tiff Converter Task",
+        executable="convert_tiff_to_ome_zarr.py",
+        meta={"cpus_per_task": 1, "mem": 4000},
+    ),
     ParallelTask(
-        name="Thresholding Label Task",
-        executable="thresholding_label_task.py",
+        name="PlantSeg Workflow Task",
+        executable="plantseg_workflow.py",
         meta={"cpus_per_task": 1, "mem": 4000},
     ),
 ]
