@@ -42,6 +42,8 @@ class Image:
 
     def __post_init__(self):
         """Post init method to validate the image data."""
+        self.layout = VALID_IMAGE_LAYOUT(self.layout)
+
         if self.layout not in VALID_IMAGE_LAYOUT:
             raise ValueError(f"Invalid image layout: {self.layout}")
 
@@ -175,7 +177,7 @@ def load_h5_images(
 
 
 def load_tiff_images(
-    input_path: str,
+    image_path: str,
     label_path: Optional[str] = None,
     new_image_key: str = "raw",
     new_label_key: str = "label",
@@ -187,13 +189,13 @@ def load_tiff_images(
     label data (from a second TIFF file).
 
     Args:
-        input_path (str): Path to the TIFF file.
+        image_path (str): Path to the TIFF file.
         label_path (Optional[str]): Path to the label TIFF file.
         new_image_key (str): New key for the image data to be stored in the OME-Zarr.
         new_label_key (str): New key for the label data to be stored in the OME-Zarr.
         image_layout (VALID_IMAGE_LAYOUT): The layout of the image data.
     """
-    image, (voxel_size, _, _, unit) = load_tiff(input_path)
+    image, (voxel_size, _, _, unit) = load_tiff(image_path)
 
     if label_path is not None:
         label, _ = load_tiff(label_path)

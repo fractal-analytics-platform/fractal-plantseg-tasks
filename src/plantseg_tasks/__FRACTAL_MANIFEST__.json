@@ -12,15 +12,23 @@
         "title": "ConvertH5ToOmeZarr",
         "type": "object",
         "properties": {
+          "zarr_urls": {
+            "title": "Zarr Urls",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of URLs to the OME-Zarr files. Not used in this task."
+          },
+          "zarr_dir": {
+            "title": "Zarr Dir",
+            "type": "string",
+            "description": "Output path to save the OME-Zarr file."
+          },
           "input_path": {
             "title": "Input Path",
             "type": "string",
             "description": "Input path to the H5 file, or a folder containing H5 files."
-          },
-          "output_dir": {
-            "title": "Output Dir",
-            "type": "string",
-            "description": "Output path to save the OME-Zarr file."
           },
           "image_key": {
             "title": "Image Key",
@@ -29,16 +37,13 @@
             "description": "The image key in the H5 file where the image is stored."
           },
           "image_layout": {
-            "title": "Image Layout",
             "default": "ZYX",
-            "enum": [
-              "CZYX",
-              "ZCYX",
-              "ZYX",
-              "CYX",
-              "YX"
+            "allOf": [
+              {
+                "$ref": "#/definitions/VALID_IMAGE_LAYOUT"
+              }
             ],
-            "type": "string",
+            "title": "Image_Layout",
             "description": "The layout of the image data. Must be one of 'ZYX', 'YX', 'XY', 'CZYX', 'ZCYX'."
           },
           "label_key": {
@@ -76,11 +81,24 @@
           }
         },
         "required": [
-          "input_path",
-          "output_dir"
+          "zarr_urls",
+          "zarr_dir",
+          "input_path"
         ],
         "additionalProperties": false,
         "definitions": {
+          "VALID_IMAGE_LAYOUT": {
+            "title": "VALID_IMAGE_LAYOUT",
+            "description": "Valid image layouts.",
+            "enum": [
+              "CZYX",
+              "ZCYX",
+              "ZYX",
+              "CYX",
+              "YX"
+            ],
+            "type": "string"
+          },
           "AxisScaleModel": {
             "title": "AxisScaleModel",
             "description": "Input model for the axis scale to be used in the conversion.",
@@ -215,33 +233,38 @@
         "title": "ConvertTiffToOmeZarr",
         "type": "object",
         "properties": {
-          "input_path": {
-            "title": "Input Path",
-            "type": "string",
-            "description": "Input path to the TIFF file, or a folder containing TIFF files."
+          "zarr_urls": {
+            "title": "Zarr Urls",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of URLs to the OME-Zarr files. Not used in this task."
           },
-          "output_dir": {
-            "title": "Output Dir",
+          "zarr_dir": {
+            "title": "Zarr Dir",
             "type": "string",
             "description": "Output path to save the OME-Zarr file."
           },
-          "image_layout": {
-            "title": "Image Layout",
-            "default": "ZYX",
-            "enum": [
-              "CZYX",
-              "ZCYX",
-              "ZYX",
-              "CYX",
-              "YX"
-            ],
+          "image_path": {
+            "title": "Image Path",
             "type": "string",
+            "description": "Input path to the TIFF file, or a folder containing TIFF files."
+          },
+          "image_layout": {
+            "default": "ZYX",
+            "allOf": [
+              {
+                "$ref": "#/definitions/VALID_IMAGE_LAYOUT"
+              }
+            ],
+            "title": "Image_Layout",
             "description": "The layout of the image data."
           },
           "label_path": {
             "title": "Label Path",
             "type": "string",
-            "description": "Input path to the label TIFF file, or a folder containing TIFF files."
+            "description": "Input path to the label TIFF file. Folder containing TIFF files is not yet supported."
           },
           "new_image_key": {
             "title": "New Image Key",
@@ -275,11 +298,24 @@
           }
         },
         "required": [
-          "input_path",
-          "output_dir"
+          "zarr_urls",
+          "zarr_dir",
+          "image_path"
         ],
         "additionalProperties": false,
         "definitions": {
+          "VALID_IMAGE_LAYOUT": {
+            "title": "VALID_IMAGE_LAYOUT",
+            "description": "Valid image layouts.",
+            "enum": [
+              "CZYX",
+              "ZCYX",
+              "ZYX",
+              "CYX",
+              "YX"
+            ],
+            "type": "string"
+          },
           "AxisScaleModel": {
             "title": "AxisScaleModel",
             "description": "Input model for the axis scale to be used in the conversion.",

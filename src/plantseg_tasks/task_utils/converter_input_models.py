@@ -1,5 +1,6 @@
 """Pydantic models for the converter tasks."""
 
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
@@ -8,7 +9,16 @@ from pydantic.v1 import BaseModel, Field  # , field_validator
 ALLOWED_TIFF_EXTENSIONS = [".tiff", ".tif"]
 ALLOWED_H5_EXTENSIONS = [".h5", ".hdf5"]
 
-VALID_IMAGE_LAYOUT = Literal["CZYX", "ZCYX", "ZYX", "CYX", "YX"]
+
+class VALID_IMAGE_LAYOUT(StrEnum):
+    """Valid image layouts."""
+
+    CZYX = "CZYX"
+    ZCYX = "ZCYX"
+    ZYX = "ZYX"
+    CYX = "CYX"
+    YX = "YX"
+
 
 VALID_AXIS_NAMES = Literal["c", "z", "y", "x"]
 

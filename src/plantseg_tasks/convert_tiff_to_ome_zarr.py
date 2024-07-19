@@ -16,8 +16,9 @@ from plantseg_tasks.task_utils.io import load_tiff_images
 
 @validate_arguments
 def convert_tiff_to_ome_zarr(
-    input_path: str,
-    output_dir: str,
+    zarr_urls: list[str],
+    zarr_dir: str,
+    image_path: str,
     image_layout: VALID_IMAGE_LAYOUT = "ZYX",
     label_path: Optional[str] = None,
     new_image_key: str = "raw",
@@ -32,12 +33,14 @@ def convert_tiff_to_ome_zarr(
     """TIFF to OME-Zarr converter task.
 
     Args:
-        input_path (str): Input path to the TIFF file,
+        zarr_urls (list[str]): List of URLs to the OME-Zarr files.
+            Not used in this task.
+        zarr_dir (str): Output path to save the OME-Zarr file.
+        image_path (str): Input path to the TIFF file,
             or a folder containing TIFF files.
-        output_dir (str): Output path to save the OME-Zarr file.
         image_layout (VALID_IMAGE_LAYOUT): The layout of the image data.
-        label_path (Optional[str]): Input path to the label TIFF file, or a folder
-            containing TIFF files.
+        label_path (Optional[str]): Input path to the label TIFF file. Folder containing
+            TIFF files is not yet supported.
         new_image_key (str): New key for the image data to
             be stored in the OME-Zarr.
         new_label_key (str): New key for the label data to
@@ -48,7 +51,7 @@ def convert_tiff_to_ome_zarr(
         ome_zarr_parameters (OMEZarrBuilderParams): Parameters for the OME-Zarr builder.
     """
     image_dc = load_tiff_images(
-        input_path=input_path,
+        image_path=image_path,
         label_path=label_path,
         new_image_key=new_image_key,
         new_label_key=new_label_key,

@@ -16,8 +16,9 @@ from plantseg_tasks.task_utils.io import load_h5_images
 
 @validate_arguments
 def convert_h5_to_ome_zarr(
+    zarr_urls: list[str],
+    zarr_dir: str,
     input_path: str,
-    output_dir: str,
     image_key: str = "raw",
     image_layout: VALID_IMAGE_LAYOUT = "ZYX",
     label_key: Optional[str] = None,
@@ -33,8 +34,10 @@ def convert_h5_to_ome_zarr(
     """H5 to OME-Zarr converter task.
 
     Args:
+        zarr_urls (list[str]): List of URLs to the OME-Zarr files.
+            Not used in this task.
+        zarr_dir (str): Output path to save the OME-Zarr file.
         input_path (str): Input path to the H5 file, or a folder containing H5 files.
-        output_dir (str): Output path to save the OME-Zarr file.
         image_key (str): The image key in the H5 file where the image is stored.
         image_layout (VALID_IMAGE_LAYOUT): The layout of the image data.
             Must be one of 'ZYX', 'YX', 'XY', 'CZYX', 'ZCYX'.
