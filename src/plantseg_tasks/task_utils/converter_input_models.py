@@ -8,6 +8,8 @@ from pydantic.v1 import BaseModel, Field  # , field_validator
 ALLOWED_TIFF_EXTENSIONS = [".tiff", ".tif"]
 ALLOWED_H5_EXTENSIONS = [".h5", ".hdf5"]
 
+VALID_IMAGE_LAYOUT = Literal["CZYX", "ZCYX", "ZYX", "CYX", "YX"]
+
 VALID_AXIS_NAMES = Literal["c", "z", "y", "x"]
 
 VALID_AXIS_UNITS_TYPE = Literal[

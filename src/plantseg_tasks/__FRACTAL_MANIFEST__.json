@@ -28,10 +28,33 @@
             "type": "string",
             "description": "The image key in the H5 file where the image is stored."
           },
+          "image_layout": {
+            "title": "Image Layout",
+            "default": "ZYX",
+            "enum": [
+              "CZYX",
+              "ZCYX",
+              "ZYX",
+              "CYX",
+              "YX"
+            ],
+            "type": "string",
+            "description": "The layout of the image data. Must be one of 'ZYX', 'YX', 'XY', 'CZYX', 'ZCYX'."
+          },
           "label_key": {
             "title": "Label Key",
             "type": "string",
             "description": "The label key in the H5 file where a label/segmentation is stored."
+          },
+          "new_image_key": {
+            "title": "New Image Key",
+            "type": "string",
+            "description": "New key for the image data to be stored in the OME-Zarr. If not provided, the original key will be used."
+          },
+          "new_label_key": {
+            "title": "New Label Key",
+            "type": "string",
+            "description": "New key for the label data to be stored in the OME-Zarr. If not provided, the original key will be used."
           },
           "custom_axis": {
             "title": "Custom Axis",
@@ -202,10 +225,35 @@
             "type": "string",
             "description": "Output path to save the OME-Zarr file."
           },
+          "image_layout": {
+            "title": "Image Layout",
+            "default": "ZYX",
+            "enum": [
+              "CZYX",
+              "ZCYX",
+              "ZYX",
+              "CYX",
+              "YX"
+            ],
+            "type": "string",
+            "description": "The layout of the image data."
+          },
           "label_path": {
             "title": "Label Path",
             "type": "string",
             "description": "Input path to the label TIFF file, or a folder containing TIFF files."
+          },
+          "new_image_key": {
+            "title": "New Image Key",
+            "default": "raw",
+            "type": "string",
+            "description": "New key for the image data to be stored in the OME-Zarr."
+          },
+          "new_label_key": {
+            "title": "New Label Key",
+            "default": "label",
+            "type": "string",
+            "description": "New key for the label data to be stored in the OME-Zarr."
           },
           "custom_axis": {
             "title": "Custom Axis",
@@ -388,7 +436,8 @@
             "description": "Select if the model is sourced from PlantSegZoo or BioImageIO.",
             "enum": [
               "PlantSegZoo",
-              "BioImageIO"
+              "BioImageIO",
+              "LocalModel"
             ],
             "type": "string"
           },
@@ -489,7 +538,7 @@
                   }
                 ],
                 "title": "Model_Source",
-                "description": "The source of the model."
+                "description": "Define which of the following fields to use."
               },
               "plantsegzoo_name": {
                 "default": "generic_confocal_3D_unet",
@@ -499,7 +548,7 @@
                   }
                 ],
                 "title": "Plantsegzoo_Name",
-                "description": "The model name from the PlantSeg Zoo."
+                "description": "The model name from the PlantSeg Zoo. This field is only used if model_source is PlantSegZoo."
               },
               "bioimageio_name": {
                 "default": "affable-shark",
@@ -509,7 +558,12 @@
                   }
                 ],
                 "title": "Bioimageio_Name",
-                "description": "The model name from the BioImageIO Zoo."
+                "description": "The model name from the BioImageIO Zoo. This field is only used if model_source is BioImageIO."
+              },
+              "local_model_path": {
+                "title": "Local Model Path",
+                "type": "string",
+                "description": "The path to the local model. This field is only used if model_source is LocalModel."
               },
               "device": {
                 "default": "cuda",
@@ -588,7 +642,7 @@
                     "$ref": "#/definitions/SegmentationType"
                   }
                 ],
-                "description": "The segmentation method to use."
+                "description": "The segmentation method to use. Must be one of 'gasp', 'mutex_ws', 'multicut', 'dt_watershed'."
               },
               "beta": {
                 "title": "Beta",

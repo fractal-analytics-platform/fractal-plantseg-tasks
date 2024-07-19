@@ -1,6 +1,7 @@
 """PlantSeg workflow UI input models."""
 
 from enum import StrEnum
+from typing import Optional
 
 from plantseg.models.zoo import model_zoo
 from pydantic.v1 import BaseModel, Field
@@ -36,16 +37,20 @@ class ModelsPool(StrEnum):
 
     PlantSegZoo = "PlantSegZoo"
     BioImageIO = "BioImageIO"
+    LocalModel = "LocalModel"
 
 
 class PlantSegPredictionsModel(BaseModel):
     """Input model for PlantSeg predictions.
 
     Args:
-        model_source (ModelsPool): The source of the model.
+        model_source (ModelsPool): Define which of the following fields to use.
         plantsegzoo_name (DynamicallyGeneratedModel): The model name from
-            the PlantSeg Zoo.
+            the PlantSeg Zoo. This field is only used if model_source is PlantSegZoo.
         bioimageio_name (DynamicBioIOModels): The model name from the BioImageIO Zoo.
+            This field is only used if model_source is BioImageIO.
+        local_model_path (str): The path to the local model.
+            This field is only used if model_source is LocalModel.
         device (Device): The device to use for predictions.
         patch (tuple[int, int, int]): The patch size.
         save_results (bool): Whether to save the results.
@@ -57,6 +62,7 @@ class PlantSegPredictionsModel(BaseModel):
     bioimageio_name: DynamicBioIOModels = (  # type: ignore
         model_zoo.get_bioimageio_zoo_all_model_names()[0]
     )
+    local_model_path: Optional[str] = None
     device: Device = Device.cuda
     patch: tuple[int, int, int] = (80, 160, 160)
     save_results: bool = False
@@ -89,6 +95,7 @@ class PlantSegSegmentationModel(BaseModel):
     Args:
         ws_threshold (float): The threshold for the watershed.
         segmentation_type (SegmentationType): The segmentation method to use.
+            Must be one of 'gasp', 'mutex_ws', 'multicut', 'dt_watershed'.
         beta (float): The beta value.
         post_minsize (int): The minimum size.
         skip (bool): Whether to skip the segmentation.
