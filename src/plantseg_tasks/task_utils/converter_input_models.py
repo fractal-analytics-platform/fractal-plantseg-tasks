@@ -4,7 +4,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
-from pydantic.v1 import BaseModel, Field  # , field_validator
+from pydantic import BaseModel, Field  # , field_validator
 
 ALLOWED_TIFF_EXTENSIONS = [".tiff", ".tif"]
 ALLOWED_H5_EXTENSIONS = [".h5", ".hdf5"]
@@ -13,6 +13,7 @@ ALLOWED_H5_EXTENSIONS = [".h5", ".hdf5"]
 class VALID_IMAGE_LAYOUT(StrEnum):
     """Valid image layouts."""
 
+    TCZYX = "TCZYX"
     CZYX = "CZYX"
     ZCYX = "ZCYX"
     ZYX = "ZYX"
@@ -118,6 +119,14 @@ class AxisScaleModel(BaseModel):
     scale: float = Field(default=1.0, ge=0.0)
 
 
+def _default_axis():
+    return [
+        AxisScaleModel(axis_name="z", scale=1),
+        AxisScaleModel(axis_name="y"),
+        AxisScaleModel(axis_name="x"),
+    ]
+
+
 class CustomAxisInputModel(BaseModel):
     """Input model for the custom axis to be used in the conversion.
 
@@ -144,20 +153,20 @@ class OMEZarrBuilderParams(BaseModel):
         number_multiscale: The number of multiscale
             levels to create. Default is 4.
         scaling_factor_XY: The factor to downsample the XY plane.
-            Default is 2.0, meaning every layer is half the size over XY.
+            Default is 2, meaning every layer is half the size over XY.
         scaling_factor_Z: The factor to downsample the Z plane.
-            Default is 1.0, no scaling on Z.
+            Default is 1, no scaling on Z.
         create_all_ome_axis: Whether to create all OME axis.
             Default is True, meaning that missing axis will be created
             with a sigleton dimension.
     """
 
     number_multiscale: int = Field(default=4, ge=0)
-    scaling_factor_XY: float = Field(
-        default=2.0,
-        ge=1.0,
-        le=10.0,
+    scaling_factor_XY: int = Field(
+        default=2,
+        ge=1,
+        le=10,
         title="Scaling Factor XY",
     )
-    scaling_factor_Z: float = Field(default=1.0, ge=1.0, le=10.0)
+    scaling_factor_Z: int = Field(default=1, ge=1, le=10)
     create_all_ome_axis: bool = True

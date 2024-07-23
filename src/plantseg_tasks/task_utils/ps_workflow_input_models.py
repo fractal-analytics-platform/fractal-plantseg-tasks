@@ -4,7 +4,7 @@ from enum import StrEnum
 from typing import Optional
 
 from plantseg.models.zoo import model_zoo
-from pydantic.v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 
 
 class Device(StrEnum):
@@ -64,7 +64,7 @@ class PlantSegPredictionsModel(BaseModel):
     )
     local_model_path: Optional[str] = None
     device: Device = Device.cuda
-    patch: tuple[int, int, int] = (80, 160, 160)
+    patch: tuple[int, ...] = (80, 160, 160)
     save_results: bool = False
     skip: bool = False
 
