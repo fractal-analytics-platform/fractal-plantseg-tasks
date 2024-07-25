@@ -8,17 +8,21 @@ from plantseg_tasks.task_utils.ps_workflow_input_models import (
     PlantSegSegmentationModel,
 )
 
+from fractal_tasks_core.tasks.io_models import ChannelInputModel
+
 
 @validate_call
 def plantseg_workflow(
     zarr_url: str,
+    channel_model: ChannelInputModel,
     prediction_param: PlantSegPredictionsModel,
     segmentation_param: PlantSegSegmentationModel,
 ):
     """PlantSeg workflow task.
 
     Args:
-        zarr_url: Test
+        zarr_url: Zarr url
+        channel_model (ChannelInputModel):
         predictions_params (PlantSegPredictionsModel): Configuration for
             PlantSeg predictions step.
         segmentation_params (PlantSegSegmentationModel): Configuration for

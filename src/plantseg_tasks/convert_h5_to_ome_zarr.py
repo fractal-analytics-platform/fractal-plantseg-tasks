@@ -28,10 +28,10 @@ def convert_single_h5_to_ome(
     new_image_key: Optional[str] = None,
     new_label_key: Optional[str] = None,
     custom_axis: CustomAxisInputModel = Field(
-        title="Custom Axis", default_factory=CustomAxisInputModel
+        title="Custom Axis", default=CustomAxisInputModel()
     ),
     ome_zarr_parameters: OMEZarrBuilderParams = Field(
-        title="OME-Zarr Parameters", default_factory=OMEZarrBuilderParams
+        title="OME-Zarr Parameters", default=OMEZarrBuilderParams()
     ),
 ):
     """H5 to OME-Zarr converter task.
@@ -65,7 +65,7 @@ def convert_single_h5_to_ome(
 
     zarr_url = Path(zarr_dir) / f"{Path(input_path).stem}.zarr"
     image_ds = correct_image_metadata(image_ds, custom_axis=custom_axis)
-    create_ome_zarr(
+    return create_ome_zarr(
         zarr_url=zarr_url,
         path=image_ds.image_key,
         name=image_ds.image_key,
@@ -130,8 +130,9 @@ def convert_h5_to_ome_zarr(
         files = [Path(input_path)]
 
     Path(zarr_dir).mkdir(parents=True, exist_ok=True)
+    image_list_updates = []
     for file in files:
-        convert_single_h5_to_ome(
+        new_zarr_url = convert_single_h5_to_ome(
             zarr_dir=zarr_dir,
             input_path=str(file),
             image_key=image_key,
@@ -142,6 +143,19 @@ def convert_h5_to_ome_zarr(
             custom_axis=custom_axis,
             ome_zarr_parameters=ome_zarr_parameters,
         )
+
+        if VALID_IMAGE_LAYOUT(image_layout) in [
+            VALID_IMAGE_LAYOUT.CYX,
+            VALID_IMAGE_LAYOUT.YX,
+        ]:
+            is_3d = False
+        else:
+            is_3d = True
+
+        image_update = {"zarr_url": new_zarr_url, "types": {"is_3D": is_3d}}
+        image_list_updates.append(image_update)
+
+    return {"image_list_updates": image_list_updates}
 
 
 if __name__ == "__main__":

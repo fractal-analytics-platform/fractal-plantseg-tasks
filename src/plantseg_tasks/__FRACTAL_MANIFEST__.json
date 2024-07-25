@@ -104,20 +104,20 @@
                 "description": "The number of multiscale levels to create. Default is 4."
               },
               "scaling_factor_XY": {
-                "default": 2.0,
-                "maximum": 10.0,
-                "minimum": 1.0,
+                "default": 2,
+                "maximum": 10,
+                "minimum": 1,
                 "title": "Scaling Factor XY",
-                "type": "number",
-                "description": "The factor to downsample the XY plane. Default is 2.0, meaning every layer is half the size over XY."
+                "type": "integer",
+                "description": "The factor to downsample the XY plane. Default is 2, meaning every layer is half the size over XY."
               },
               "scaling_factor_Z": {
-                "default": 1.0,
-                "maximum": 10.0,
-                "minimum": 1.0,
+                "default": 1,
+                "maximum": 10,
+                "minimum": 1,
                 "title": "Scaling Factor Z",
-                "type": "number",
-                "description": "The factor to downsample the Z plane. Default is 1.0, no scaling on Z."
+                "type": "integer",
+                "description": "The factor to downsample the Z plane. Default is 1, no scaling on Z."
               },
               "create_all_ome_axis": {
                 "default": true,
@@ -318,20 +318,20 @@
                 "description": "The number of multiscale levels to create. Default is 4."
               },
               "scaling_factor_XY": {
-                "default": 2.0,
-                "maximum": 10.0,
-                "minimum": 1.0,
+                "default": 2,
+                "maximum": 10,
+                "minimum": 1,
                 "title": "Scaling Factor XY",
-                "type": "number",
-                "description": "The factor to downsample the XY plane. Default is 2.0, meaning every layer is half the size over XY."
+                "type": "integer",
+                "description": "The factor to downsample the XY plane. Default is 2, meaning every layer is half the size over XY."
               },
               "scaling_factor_Z": {
-                "default": 1.0,
-                "maximum": 10.0,
-                "minimum": 1.0,
+                "default": 1,
+                "maximum": 10,
+                "minimum": 1,
                 "title": "Scaling Factor Z",
-                "type": "number",
-                "description": "The factor to downsample the Z plane. Default is 1.0, no scaling on Z."
+                "type": "integer",
+                "description": "The factor to downsample the Z plane. Default is 1, no scaling on Z."
               },
               "create_all_ome_axis": {
                 "default": true,
@@ -434,6 +434,23 @@
       },
       "args_schema_parallel": {
         "$defs": {
+          "ChannelInputModel": {
+            "description": "A channel which is specified by either `wavelength_id` or `label`.",
+            "properties": {
+              "wavelength_id": {
+                "title": "Wavelength Id",
+                "type": "string",
+                "description": "Unique ID for the channel wavelength, e.g. `A01_C01`. Can only be specified if label is not set."
+              },
+              "label": {
+                "title": "Label",
+                "type": "string",
+                "description": "Name of the channel. Can only be specified if wavelength_id is not set."
+              }
+            },
+            "title": "ChannelInputModel",
+            "type": "object"
+          },
           "Device": {
             "description": "Device to use for CNN predictions.",
             "enum": [
@@ -663,7 +680,12 @@
           "zarr_url": {
             "title": "Zarr Url",
             "type": "string",
-            "description": "Test"
+            "description": "Zarr url"
+          },
+          "channel_model": {
+            "$ref": "#/$defs/ChannelInputModel",
+            "title": "Channel Model",
+            "description": ""
           },
           "prediction_param": {
             "$ref": "#/$defs/PlantSegPredictionsModel",
@@ -678,6 +700,7 @@
         },
         "required": [
           "zarr_url",
+          "channel_model",
           "prediction_param",
           "segmentation_param"
         ],

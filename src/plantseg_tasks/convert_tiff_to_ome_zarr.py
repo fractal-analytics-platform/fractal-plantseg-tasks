@@ -32,7 +32,7 @@ def convert_single_tiff_to_ome_zarr(
     ome_zarr_parameters: OMEZarrBuilderParams = Field(
         title="OME-Zarr Parameters", default_factory=OMEZarrBuilderParams
     ),
-):
+) -> str:
     """TIFF to OME-Zarr converter task.
 
     Args:
@@ -61,7 +61,7 @@ def convert_single_tiff_to_ome_zarr(
 
     zarr_url = Path(zarr_dir) / f"{Path(image_path).stem}.zarr"
     image_ds = correct_image_metadata(image_ds, custom_axis=custom_axis)
-    create_ome_zarr(
+    return create_ome_zarr(
         zarr_url=zarr_url,
         path=image_ds.image_key,
         name=image_ds.image_key,
@@ -80,10 +80,10 @@ def convert_tiff_to_ome_zarr(
     new_image_key: str = "raw",
     new_label_key: str = "label",
     custom_axis: CustomAxisInputModel = Field(
-        title="Custom Axis", default_factory=CustomAxisInputModel
+        title="Custom Axis", default=CustomAxisInputModel()
     ),
     ome_zarr_parameters: OMEZarrBuilderParams = Field(
-        title="OME-Zarr Parameters", default_factory=OMEZarrBuilderParams
+        title="OME-Zarr Parameters", default=OMEZarrBuilderParams()
     ),
 ):
     """TIFF to OME-Zarr converter task.
@@ -127,8 +127,9 @@ def convert_tiff_to_ome_zarr(
     ):
         files = [Path(image_path)]
 
+    image_list_updates = []
     for file in files:
-        convert_single_tiff_to_ome_zarr(
+        new_zarr_url = convert_single_tiff_to_ome_zarr(
             zarr_dir=zarr_dir,
             image_path=str(file),
             image_layout=image_layout,
@@ -138,6 +139,19 @@ def convert_tiff_to_ome_zarr(
             custom_axis=custom_axis,
             ome_zarr_parameters=ome_zarr_parameters,
         )
+
+        if VALID_IMAGE_LAYOUT(image_layout) in [
+            VALID_IMAGE_LAYOUT.CYX,
+            VALID_IMAGE_LAYOUT.YX,
+        ]:
+            is_3d = False
+        else:
+            is_3d = True
+
+        image_update = {"zarr_url": new_zarr_url, "types": {"is_3D": is_3d}}
+        image_list_updates.append(image_update)
+
+    return {"image_list_updates": image_list_updates}
 
 
 if __name__ == "__main__":

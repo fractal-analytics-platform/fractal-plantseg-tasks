@@ -127,6 +127,10 @@ def _default_axis():
     ]
 
 
+def _default_channels_names():
+    return ["Boundary"]
+
+
 class CustomAxisInputModel(BaseModel):
     """Input model for the custom axis to be used in the conversion.
 
@@ -141,9 +145,9 @@ class CustomAxisInputModel(BaseModel):
 
     """
 
-    axis: list[AxisScaleModel] = Field(default_factory=list)
+    axis: list[AxisScaleModel] = Field(default_factory=_default_axis)
     spatial_units: VALID_AXIS_UNITS_TYPE = "micrometer"
-    channel_names: list[str] = Field(default_factory=list)
+    channel_names: list[str] = Field(default_factory=_default_channels_names)
 
 
 class OMEZarrBuilderParams(BaseModel):

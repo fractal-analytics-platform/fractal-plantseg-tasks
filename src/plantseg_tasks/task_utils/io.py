@@ -365,7 +365,7 @@ def create_ome_zarr(
     name: str,
     image: Image,
     omezarr_params: OMEZarrBuilderParams,
-):
+) -> str:
     """Create an OME-Zarr file from a give Image object."""
     multiscale_metadata = build_multiscale_metadata(
         image=image, omezarr_params=omezarr_params, name=name
@@ -445,3 +445,4 @@ def create_ome_zarr(
             num_levels=omezarr_params.number_multiscale,
             coarsening_xy=int(omezarr_params.scaling_factor_XY),
         )
+    return zarr_url
