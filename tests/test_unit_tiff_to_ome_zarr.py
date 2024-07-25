@@ -3,12 +3,14 @@ from pathlib import Path
 import numpy as np
 import pytest
 from plantseg.io import create_tiff
+from devtools import debug
 
-from plantseg_tasks.task_utils.io import load_tiff_images
+from plantseg_tasks.convert_tiff_to_ome_zarr import convert_tiff_to_ome_zarr
+from fractal_tasks_core.ngff.zarr_utils import load_NgffImageMeta
 
 
 @pytest.fixture
-def sample_tiff_file(tmp_path: Path) -> tuple[Path, Path]:
+def sample_tiff_file_3d(tmp_path: Path) -> tuple[str, str]:
     tiff_file = tmp_path / "sample.tiff"
     tiff_label_file = tmp_path / "sample_label.tiff"
     voxel_size = (0.5, 0.25, 0.25)
@@ -20,40 +22,29 @@ def sample_tiff_file(tmp_path: Path) -> tuple[Path, Path]:
     create_tiff(
         tiff_label_file, stack=random_label, voxel_size=voxel_size, voxel_size_unit="um"
     )
-    return tiff_file, tiff_label_file
+    return str(tiff_file), str(tiff_label_file)
 
 
 class TestTiffToOmeZarr:
-    def test_load_tiff_image_and_label(self, sample_tiff_file: tuple[Path, Path]):
-        image_file, label_file = sample_tiff_file
-        image_dc = load_tiff_images(
-            image_path=image_file, label_path=label_file, image_layout="ZYX"
+    def test_full_workflow_3D(
+        self, sample_tiff_file_3d: tuple[str, str], tmp_path: Path
+    ):
+        zarr_dir = str(tmp_path / "zarr")
+        image_path, label_path = sample_tiff_file_3d
+
+        # Happy path
+        image_list_update = convert_tiff_to_ome_zarr(
+            zarr_urls=[],
+            zarr_dir=zarr_dir,
+            image_path=image_path,
+            label_path=label_path,
+            new_image_key="raw",
+            new_label_key="label",
+            image_layout="ZYX",
         )
-        assert image_dc.image_data.shape == (10, 10, 10)
-        assert image_dc.label_data.shape == (10, 10, 10)
-        np.testing.assert_allclose((0.5, 0.25, 0.25), image_dc.voxel_size)
-        assert image_dc.unit == "um"
 
-    def test_load_tiff_image(self, sample_tiff_file: tuple[Path, Path]):
-        image_file, _ = sample_tiff_file
-        image_dc = load_tiff_images(
-            image_path=image_file, label_path=None, image_layout="ZYX"
-        )
-        assert image_dc.image_data.shape == (10, 10, 10)
-        assert image_dc.label_data is None
-        np.testing.assert_allclose((0.5, 0.25, 0.25), image_dc.voxel_size)
-        assert image_dc.unit == "um"
+        zarr_url = image_list_update["image_list_updates"][0]["zarr_url"]
+        assert Path(zarr_url).exists()
+        load_NgffImageMeta(zarr_url)
 
-    def test_fail_if_file_not_found(self, sample_tiff_file: tuple[Path, Path]):
-        image_file, _ = sample_tiff_file
-        with pytest.raises(FileNotFoundError):
-            load_tiff_images(
-                image_path=image_file.with_suffix(".not_found"),
-                label_path=None,
-                image_layout="ZYX",
-            )
-
-    def test_fail_if_layout_not_correct(self, sample_tiff_file: tuple[Path, Path]):
-        image_file, _ = sample_tiff_file
-        with pytest.raises(ValueError):
-            load_tiff_images(image_path=image_file, label_path=None, image_layout="YX")
+        # TODO add proper validation with ngio

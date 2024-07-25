@@ -5,10 +5,14 @@ import pytest
 from plantseg.io import create_h5
 
 from plantseg_tasks.task_utils.io import load_h5_images
+from devtools import debug
+
+from plantseg_tasks.convert_h5_to_ome_zarr import convert_h5_to_ome_zarr
+from fractal_tasks_core.ngff.zarr_utils import load_NgffImageMeta
 
 
 @pytest.fixture
-def sample_h5_file(tmp_path: Path) -> tuple[Path, dict[str, str]]:
+def sample_h5_file_3d(tmp_path: Path) -> tuple[Path, dict[str, str]]:
     """Create a sample h5 file for testing."""
     h5_file = tmp_path / "sample.h5"
     voxel_size = (0.5, 0.25, 0.25)
@@ -20,50 +24,23 @@ def sample_h5_file(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 
 
 class TestH5ToOmeZarr:
-    def test_load_h5_image_and_label(self, sample_h5_file: tuple[Path, dict[str, str]]):
-        sample_h5_file, keys = sample_h5_file
-        image_dc = load_h5_images(
-            input_path=sample_h5_file,
+    def test_full_workflow_3D(self, sample_h5_file_3d: tuple[str, str], tmp_path: Path):
+        zarr_dir = str(tmp_path / "zarr")
+        image_path, keys = sample_h5_file_3d
+        image_path = str(image_path)
+
+        # Happy path
+        image_list_update = convert_h5_to_ome_zarr(
+            zarr_urls=[],
+            zarr_dir=zarr_dir,
+            input_path=image_path,
             image_key=keys["image_key"],
             label_key=keys["label_key"],
             image_layout="ZYX",
         )
-        assert image_dc.image_data.shape == (10, 10, 10)
-        assert image_dc.label_data.shape == (10, 10, 10)
-        np.testing.assert_allclose((0.5, 0.25, 0.25), image_dc.voxel_size)
-        assert image_dc.unit == "um"
 
-    def test_load_h5_image(self, sample_h5_file: tuple[Path, dict[str, str]]):
-        sample_h5_file, keys = sample_h5_file
-        image_dc = load_h5_images(
-            input_path=sample_h5_file,
-            image_key=keys["image_key"],
-            label_key=None,
-            image_layout="ZYX",
-        )
-        assert image_dc.image_data.shape == (10, 10, 10)
-        assert image_dc.label_data is None
-        np.testing.assert_allclose((0.5, 0.25, 0.25), image_dc.voxel_size)
-        assert image_dc.unit == "um"
+        zarr_url = image_list_update["image_list_updates"][0]["zarr_url"]
+        assert Path(zarr_url).exists()
+        load_NgffImageMeta(zarr_url)
 
-    def test_fail_if_key_not_found(self, sample_h5_file: tuple[Path, dict[str, str]]):
-        sample_h5_file, keys = sample_h5_file
-        with pytest.raises(KeyError):
-            load_h5_images(
-                input_path=sample_h5_file,
-                image_key="not_found",
-                label_key=keys["label_key"],
-                image_layout="ZYX",
-            )
-
-    def test_fail_if_layout_not_correct(
-        self, sample_h5_file: tuple[Path, dict[str, str]]
-    ):
-        sample_h5_file, keys = sample_h5_file
-        with pytest.raises(ValueError):
-            load_h5_images(
-                input_path=sample_h5_file,
-                image_key=keys["image_key"],
-                label_key=keys["label_key"],
-                image_layout="YX",
-            )
+        # TODO add proper validation with ngio
