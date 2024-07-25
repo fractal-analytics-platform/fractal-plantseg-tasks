@@ -1,5 +1,6 @@
 """This task converts simple H5 files to OME-Zarr."""
 
+from fractal_tasks_core.tasks.io_models import ChannelInputModel
 from fractal_tasks_core.utils import logger
 from pydantic import validate_call
 
@@ -7,8 +8,6 @@ from plantseg_tasks.task_utils.ps_workflow_input_models import (
     PlantSegPredictionsModel,
     PlantSegSegmentationModel,
 )
-
-from fractal_tasks_core.tasks.io_models import ChannelInputModel
 
 
 @validate_call
