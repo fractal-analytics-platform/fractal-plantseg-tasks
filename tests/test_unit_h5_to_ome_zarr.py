@@ -2,13 +2,10 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from fractal_tasks_core.ngff.zarr_utils import load_NgffImageMeta
 from plantseg.io import create_h5
 
-from plantseg_tasks.task_utils.io import load_h5_images
-from devtools import debug
-
 from plantseg_tasks.convert_h5_to_ome_zarr import convert_h5_to_ome_zarr
-from fractal_tasks_core.ngff.zarr_utils import load_NgffImageMeta
 
 
 @pytest.fixture

@@ -2,11 +2,10 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from fractal_tasks_core.ngff.zarr_utils import load_NgffImageMeta
 from plantseg.io import create_tiff
-from devtools import debug
 
 from plantseg_tasks.convert_tiff_to_ome_zarr import convert_tiff_to_ome_zarr
-from fractal_tasks_core.ngff.zarr_utils import load_NgffImageMeta
 
 
 @pytest.fixture

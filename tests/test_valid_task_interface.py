@@ -6,8 +6,7 @@ from subprocess import PIPE
 import pytest
 from devtools import debug
 
-from . import MANIFEST
-from . import PACKAGE_DIR
+from . import MANIFEST, PACKAGE_DIR
 
 
 def validate_command(cmd: str):
