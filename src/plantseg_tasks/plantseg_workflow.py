@@ -12,33 +12,29 @@ from plantseg_tasks.task_utils.ps_workflow_input_models import (
 )
 
 
-@validate_call
-def plantseg_workflow(
-    *,
-    zarr_url: str,
-    channel: int = 0,
-    level: int = 0,
-    table_name: Optional[str] = None,
-    prediction_model: PlantSegPredictionsModel,
-    segmentation_model: PlantSegSegmentationModel,
-) -> None:
-    """Full PlantSeg workflow.
+def _predict_simple(image, label, channel, prediction_model, segmentation_model):
+    patch = image.get_data()
+    if patch.ndim == 5:
+        assert patch.shape[0] == 1, "Time dimension not supported"
+        patch = patch[0]
 
-    This function runs the full PlantSeg workflow on a OME-Zarr file.
+    assert patch.ndim == 4, "Only 4D images are supported CXYZ"
+    patch = patch[channel]
 
-    Args:
-        zarr_url: The URL of the Zarr file.
-        channel: The channel to use.
-        level: The level to use.
-        table_name: The name of the table.
-        prediction_model: The prediction model.
-        segmentation_model: The segmentation model.
-    """
-    ngff_image = NgffImage(zarr_url=zarr_url)
-    image = ngff_image.get_multiscale_image(level=level)
+    seg = plantseg_standard_workflow(
+        image=patch,
+        prediction_model=prediction_model,
+        segmentation_model=segmentation_model,
+    )
+
+    label.write_data(seg)
+    return label
+
+
+def _predict_with_roi(
+    ngff_image, image, label, channel, prediction_model, segmentation_model, table_name
+):
     table_handler = ngff_image.get_roi_table(table_name=table_name)
-    label = ngff_image.create_new_label("ps_test")
-    label = label.change_level(level=level)
 
     max_seg_id = 0
     for info, patch in image.iter_over_rois(table_handler, return_info=True):
@@ -59,7 +55,60 @@ def plantseg_workflow(
 
         slices = info.slices[-3:]
         label._write_data(seg, slices=slices)
+    return label
 
+
+@validate_call
+def plantseg_workflow(
+    *,
+    zarr_url: str,
+    channel: int = 0,
+    level: int = 0,
+    table_name: Optional[str] = None,
+    prediction_model: PlantSegPredictionsModel,
+    segmentation_model: PlantSegSegmentationModel,
+    label_name: Optional[str] = None,
+) -> None:
+    """Full PlantSeg workflow.
+
+    This function runs the full PlantSeg workflow on a OME-Zarr file.
+
+    Args:
+        zarr_url: The URL of the Zarr file.
+        channel: Select the input channel to use.
+        level: Select at which pyramid level to run the workflow.
+        table_name: The name of a roi table to use.
+        prediction_model: Parameters for the prediction model.
+        segmentation_model: Parameters for the segmentation model.
+        label_name: The name of the label to create with the plantseg segmentation.
+    """
+    ngff_image = NgffImage(zarr_url=zarr_url)
+    image = ngff_image.get_multiscale_image(level=level)
+
+    if label_name is None:
+        label_name = f"plantseg_{segmentation_model.segmentation_type}"
+
+    label = ngff_image.create_new_label(label_name)
+    label = label.change_level(level=level)
+
+    if table_name is not None:
+        label = _predict_simple(
+            image=image,
+            label=label,
+            channel=channel,
+            prediction_model=prediction_model,
+            segmentation_model=segmentation_model,
+        )
+    else:
+        label = _predict_with_roi(
+            ngff_image=ngff_image,
+            image=image,
+            label=label,
+            channel=channel,
+            prediction_model=prediction_model,
+            segmentation_model=segmentation_model,
+            table_name=table_name,
+        )
     label.consolidate()
 
 

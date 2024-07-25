@@ -405,12 +405,46 @@
             "description": "New key for the label data to be stored in the OME-Zarr."
           },
           "custom_axis": {
-            "$ref": "#/$defs/CustomAxisInputModel",
+            "allOf": [
+              {
+                "$ref": "#/$defs/CustomAxisInputModel"
+              }
+            ],
+            "default": {
+              "axis": [
+                {
+                  "axis_name": "z",
+                  "scale": 1.0
+                },
+                {
+                  "axis_name": "y",
+                  "scale": 1.0
+                },
+                {
+                  "axis_name": "x",
+                  "scale": 1.0
+                }
+              ],
+              "spatial_units": "micrometer",
+              "channel_names": [
+                "Boundary"
+              ]
+            },
             "title": "Custom Axis",
             "description": "Custom axes to add to the OME-Zarr file. This field will override the default axes resolution and units found in the TIFF file."
           },
           "ome_zarr_parameters": {
-            "$ref": "#/$defs/OMEZarrBuilderParams",
+            "allOf": [
+              {
+                "$ref": "#/$defs/OMEZarrBuilderParams"
+              }
+            ],
+            "default": {
+              "number_multiscale": 4,
+              "scaling_factor_XY": 2,
+              "scaling_factor_Z": 1,
+              "create_all_ome_axis": true
+            },
             "title": "Ome Zarr Parameters",
             "description": "Parameters for the OME-Zarr builder."
           }
@@ -434,23 +468,6 @@
       },
       "args_schema_parallel": {
         "$defs": {
-          "ChannelInputModel": {
-            "description": "A channel which is specified by either `wavelength_id` or `label`.",
-            "properties": {
-              "wavelength_id": {
-                "title": "Wavelength Id",
-                "type": "string",
-                "description": "Unique ID for the channel wavelength, e.g. `A01_C01`. Can only be specified if label is not set."
-              },
-              "label": {
-                "title": "Label",
-                "type": "string",
-                "description": "Name of the channel. Can only be specified if wavelength_id is not set."
-              }
-            },
-            "title": "ChannelInputModel",
-            "type": "object"
-          },
           "Device": {
             "description": "Device to use for CNN predictions.",
             "enum": [
@@ -606,12 +623,6 @@
                 "type": "array",
                 "description": "The patch size."
               },
-              "save_results": {
-                "default": false,
-                "title": "Save Results",
-                "type": "boolean",
-                "description": "Whether to save the results."
-              },
               "skip": {
                 "default": false,
                 "title": "Skip",
@@ -652,12 +663,6 @@
                 "title": "Post Minsize",
                 "type": "integer",
                 "description": "The minimum size."
-              },
-              "skip": {
-                "default": false,
-                "title": "Skip",
-                "type": "boolean",
-                "description": "Whether to skip the segmentation."
               }
             },
             "title": "PlantSegSegmentationModel",
@@ -680,34 +685,50 @@
           "zarr_url": {
             "title": "Zarr Url",
             "type": "string",
-            "description": "Zarr url"
+            "description": "The URL of the Zarr file."
           },
-          "channel_model": {
-            "$ref": "#/$defs/ChannelInputModel",
-            "title": "Channel Model",
-            "description": ""
+          "channel": {
+            "default": 0,
+            "title": "Channel",
+            "type": "integer",
+            "description": "Select the input channel to use."
           },
-          "prediction_param": {
+          "level": {
+            "default": 0,
+            "title": "Level",
+            "type": "integer",
+            "description": "Select at which pyramid level to run the workflow."
+          },
+          "table_name": {
+            "title": "Table Name",
+            "type": "string",
+            "description": "The name of a roi table to use."
+          },
+          "prediction_model": {
             "$ref": "#/$defs/PlantSegPredictionsModel",
-            "title": "Prediction Param",
-            "description": "Missing description"
+            "title": "Prediction Model",
+            "description": "Parameters for the prediction model."
           },
-          "segmentation_param": {
+          "segmentation_model": {
             "$ref": "#/$defs/PlantSegSegmentationModel",
-            "title": "Segmentation Param",
-            "description": "Missing description"
+            "title": "Segmentation Model",
+            "description": "Parameters for the segmentation model."
+          },
+          "label_name": {
+            "title": "Label Name",
+            "type": "string",
+            "description": "The name of the label to create with the plantseg segmentation."
           }
         },
         "required": [
           "zarr_url",
-          "channel_model",
-          "prediction_param",
-          "segmentation_param"
+          "prediction_model",
+          "segmentation_model"
         ],
         "type": "object",
         "title": "PlantsegWorkflow"
       },
-      "docs_info": "## plantseg_workflow\nPlantSeg workflow task.\n"
+      "docs_info": "## plantseg_workflow\nFull PlantSeg workflow.\n\nThis function runs the full PlantSeg workflow on a OME-Zarr file.\n"
     }
   ],
   "has_args_schemas": true,
