@@ -53,7 +53,6 @@ class PlantSegPredictionsModel(BaseModel):
             This field is only used if model_source is LocalModel.
         device (Device): The device to use for predictions.
         patch (tuple[int, int, int]): The patch size.
-        save_results (bool): Whether to save the results.
         skip (bool): Whether to skip the predictions.
     """
 
@@ -65,7 +64,6 @@ class PlantSegPredictionsModel(BaseModel):
     local_model_path: Optional[str] = None
     device: Device = Device.cuda
     patch: tuple[int, ...] = (80, 160, 160)
-    save_results: bool = False
     skip: bool = False
 
 
@@ -107,4 +105,3 @@ class PlantSegSegmentationModel(BaseModel):
     )
     beta: float = 0.6
     post_minsize: int = 100
-    skip: bool = False
