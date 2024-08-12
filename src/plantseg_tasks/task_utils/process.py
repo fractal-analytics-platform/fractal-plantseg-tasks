@@ -16,6 +16,7 @@ from plantseg_tasks.task_utils.ps_workflow_input_models import (
     PlantSegPredictionsModel,
     PlantSegSegmentationModel,
 )
+from fractal_tasks_core.utils import logger
 
 
 def _save_multiscale_image(
@@ -168,7 +169,10 @@ def plantseg_standard_workflow(
     """
     if prediction_model.skip:
         predictions = image
+        logger.info("Skipping predictions step.")
     else:
         predictions = plantseg_predictions(image, prediction_model)
+        logger.info("Predictions step completed.")
     segmentation = plantseg_segmentation(predictions, segmentation_model)
+    logger.info("Segmentation step completed.")
     return segmentation

@@ -62,9 +62,11 @@ def convert_single_h5_to_ome(
         new_image_key=new_image_key,
         new_label_key=new_label_key,
     )
+    logger.info(f"Loaded image from {input_path}")
 
     zarr_url = Path(zarr_dir) / f"{Path(input_path).stem}.zarr"
     image_ds = correct_image_metadata(image_ds, custom_axis=custom_axis)
+    logger.info(f"Corrected metadata for {input_path}")
     return create_ome_zarr(
         zarr_url=zarr_url,
         path=image_ds.image_key,
@@ -124,10 +126,15 @@ def convert_h5_to_ome_zarr(
         if len(files) == 0:
             raise ValueError(f"Folder {input_path} does not contain any H5 files.")
 
+        logger.info(
+            f"Converting from directory: {input_path}. Found {len(files)} H5 files."
+        )
+
     elif (
         Path(input_path).is_file() and Path(input_path).suffix in ALLOWED_H5_EXTENSIONS
     ):
         files = [Path(input_path)]
+        logger.info(f"Converting from file: {input_path}")
 
     Path(zarr_dir).mkdir(parents=True, exist_ok=True)
     image_list_updates = []
@@ -152,6 +159,7 @@ def convert_h5_to_ome_zarr(
         else:
             is_3d = True
 
+        logger.info(f"Succesfully converted {file} to {new_zarr_url}")
         image_update = {"zarr_url": new_zarr_url, "types": {"is_3D": is_3d}}
         image_list_updates.append(image_update)
 
