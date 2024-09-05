@@ -195,12 +195,46 @@
             "description": "New key for the label data to be stored in the OME-Zarr. If not provided, the original key will be used."
           },
           "custom_axis": {
-            "$ref": "#/$defs/CustomAxisInputModel",
+            "allOf": [
+              {
+                "$ref": "#/$defs/CustomAxisInputModel"
+              }
+            ],
+            "default": {
+              "axis": [
+                {
+                  "axis_name": "z",
+                  "scale": 1.0
+                },
+                {
+                  "axis_name": "y",
+                  "scale": 1.0
+                },
+                {
+                  "axis_name": "x",
+                  "scale": 1.0
+                }
+              ],
+              "spatial_units": "micrometer",
+              "channel_names": [
+                "Boundary"
+              ]
+            },
             "title": "Custom Axis",
             "description": "Custom axes to add to the OME-Zarr file. This field will override the default axes resolution and units found in the H5 file."
           },
           "ome_zarr_parameters": {
-            "$ref": "#/$defs/OMEZarrBuilderParams",
+            "allOf": [
+              {
+                "$ref": "#/$defs/OMEZarrBuilderParams"
+              }
+            ],
+            "default": {
+              "number_multiscale": 4,
+              "scaling_factor_XY": 2,
+              "scaling_factor_Z": 1,
+              "create_all_ome_axis": true
+            },
             "title": "Ome Zarr Parameters",
             "description": "Parameters for the OME-Zarr builder."
           }
