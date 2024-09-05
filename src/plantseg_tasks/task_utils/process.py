@@ -122,8 +122,19 @@ def plantseg_segmentation(
         prediction: The prediction to segment.
         segmentation_model: The segmentation model.
     """
-    # run distance transform watershed
-    segmentation = dt_watershed(prediction, threshold=segmentation_model.ws_threshold)
+    if prediction.shape[0] < 5:
+        sigma_weights = [0.0, 2.0, 2.0]
+        sigma_seeds = [0.0, 1.0, 1.0]
+    else:
+        sigma_weights = 2.0
+        sigma_seeds = 1.0
+
+    segmentation = dt_watershed(
+        prediction,
+        threshold=segmentation_model.ws_threshold,
+        sigma_seeds=sigma_seeds,
+        sigma_weights=sigma_weights,
+    )
 
     if segmentation_model.segmentation_type == "gasp":
         segmentation_func = partial(gasp, n_threads=1)
@@ -147,6 +158,7 @@ def plantseg_segmentation(
         beta=segmentation_model.beta,
         post_minsize=segmentation_model.post_minsize,
     )
+
     return segmentation
 
 

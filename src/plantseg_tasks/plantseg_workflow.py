@@ -46,6 +46,7 @@ def _predict_with_roi(
             patch = patch[0]
 
         assert patch.ndim == 4, "Only 4D images are supported CXYZ"
+
         patch = patch[channel]
 
         seg = plantseg_standard_workflow(
