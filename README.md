@@ -26,4 +26,6 @@ curl -O https://raw.githubusercontent.com/fractal-analytics-platform/fractal-pla
 bash create_env_script.sh
 ```
 
+The installation script will create a conda environment with the name `fractal-plantseg-tasks` and install the package in the environment. It will also download the `__FRACTAL_MANIFEST__.json`.
+
 * In the fractal web interface add the task to the workflow as a "local" task.
