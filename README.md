@@ -18,7 +18,17 @@ Collection of Fractal task with the PlantSeg segmentation pipeline.
 curl -O https://raw.githubusercontent.com/fractal-analytics-platform/fractal-plantseg-tasks/main/create_env_script.sh
 ```
 
-* Edit the installation script to set a custom location for the conda environment and for selecting a specific version of the Fractal-PlantSeg-Tasks package
+* The scrip might require some small modifications.
+
+```bash
+VERSION="v0.1.0" # Version of the package to install (by default the latest version)
+COMMMAND="mamba" # Command to use to create the environment (mamba or conda) 
+CUDA="12.1" # Available options: 12.1, 11.8 or CPU (default is 12.1)
+# Location of the environment
+# If ENVPREFIX is not NULL, the environment will be created with the prefix $ENVPREFIX/$ENVNAME 
+# If ENVPREFIX is NULL, the environment will be created in the default location
+ENVPREFIX="NULL" 
+```
 
 * Install the package using the installation script
   
@@ -26,6 +36,7 @@ curl -O https://raw.githubusercontent.com/fractal-analytics-platform/fractal-pla
 bash create_env_script.sh
 ```
 
-The installation script will create a conda environment with the name `fractal-plantseg-tasks` and install the package in the environment. It will also download the `__FRACTAL_MANIFEST__.json`.
+The installation script will create a conda environment with the name `fractal-plantseg-tasks` and install the package in the environment. It will also download the correct `__FRACTAL_MANIFEST__.json` file.
 
-* In the fractal web interface add the task to the workflow as a "local" task.
+* In the fractal web interface add the task to the workflow as a "local env" task.
+* Plantseg will download the necessary models on the first run. The default location for the models and data is `~/.plantseg_models`. If your system has a very limited home directory, you can set the environment variable `PLANTSEG_HOME` to a different location.
