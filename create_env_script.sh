@@ -1,6 +1,6 @@
 VERSION="v0.1.0"
 COMMMAND="mamba"
-CUDA="CPU" # Available options: 12.1, 11.8 or CPU
+CUDA="12.1" # Available options: 12.1, 11.8 or CPU
 # If ENVPREFIX is not NULL, the environment will be created with the prefix $ENVPREFIX/$ENVNAME 
 # If ENVPREFIX is NULL, the environment will be created in the default location
 ENVPREFIX="NULL" 
@@ -13,7 +13,7 @@ PLANTSEG="plant-seg=1.8.1"
 if [ "$CUDA" == "CPU" ]; then
     PYTORCH_PACKAGE="pytorch cpuonly"
 else
-    PYTORCH_PACKAGE=pytorch pytorch-cuda=$CUDA
+    PYTORCH_PACKAGE="pytorch pytorch-cuda=$CUDA"
 fi
 
 if [ "$ENVPREFIX" == "NULL" ]; then
