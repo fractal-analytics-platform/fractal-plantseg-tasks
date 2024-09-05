@@ -9,6 +9,7 @@ import zarr
 from fractal_tasks_core.ngff.specs import NgffImageMeta
 from fractal_tasks_core.ngff.zarr_utils import load_NgffImageMeta
 from fractal_tasks_core.pyramids import build_pyramid
+from fractal_tasks_core.utils import logger
 from plantseg.predictions.functional import unet_predictions
 from plantseg.segmentation.functional import dt_watershed, gasp, multicut, mutex_ws
 
@@ -16,7 +17,6 @@ from plantseg_tasks.task_utils.ps_workflow_input_models import (
     PlantSegPredictionsModel,
     PlantSegSegmentationModel,
 )
-from fractal_tasks_core.utils import logger
 
 
 def _save_multiscale_image(
