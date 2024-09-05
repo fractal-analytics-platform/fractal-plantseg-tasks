@@ -4,6 +4,7 @@ from typing import Optional
 
 from pydantic import validate_call
 
+from fractal_tasks_core.utils import logger
 from plantseg_tasks.ngio.ngff_image import NgffImage
 from plantseg_tasks.task_utils.process import plantseg_standard_workflow
 from plantseg_tasks.task_utils.ps_workflow_input_models import (
@@ -13,6 +14,7 @@ from plantseg_tasks.task_utils.ps_workflow_input_models import (
 
 
 def _predict_simple(image, label, channel, prediction_model, segmentation_model):
+    logger.info("Predicting on the full image")
     patch = image.get_data()
     if patch.ndim == 5:
         assert patch.shape[0] == 1, "Time dimension not supported"
@@ -34,6 +36,7 @@ def _predict_simple(image, label, channel, prediction_model, segmentation_model)
 def _predict_with_roi(
     ngff_image, image, label, channel, prediction_model, segmentation_model, table_name
 ):
+    logger.info(f"Predicting on ROIs from table {table_name}")
     table_handler = ngff_image.get_roi_table(table_name=table_name)
 
     max_seg_id = 0
@@ -91,7 +94,7 @@ def plantseg_workflow(
     label = ngff_image.create_new_label(label_name)
     label = label.change_level(level=level)
 
-    if table_name is not None:
+    if table_name is None:
         label = _predict_simple(
             image=image,
             label=label,
