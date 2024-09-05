@@ -2,8 +2,6 @@ import json
 from pathlib import Path
 
 import plantseg_tasks
-from plantseg.io import create_h5, create_tiff
-import numpy as np
 
 PACKAGE = "plantseg_tasks"
 PACKAGE_DIR = Path(plantseg_tasks.__file__).parent

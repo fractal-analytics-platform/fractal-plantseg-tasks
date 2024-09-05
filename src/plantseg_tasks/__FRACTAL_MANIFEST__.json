@@ -502,131 +502,60 @@
       },
       "args_schema_parallel": {
         "$defs": {
-          "Device": {
-            "description": "Device to use for CNN predictions.",
-            "enum": [
-              "cpu",
-              "cuda"
-            ],
-            "title": "Device",
-            "type": "string"
-          },
-          "DynamicBioIOModels": {
-            "description": "Select a model from the BioImageIO Zoo.",
-            "enum": [
-              "affable-shark",
-              "ambitious-ant",
-              "ambitious-sloth",
-              "amiable-crocodile",
-              "chatty-frog",
-              "conscientious-seashell",
-              "courteous-otter",
-              "creative-panda",
-              "determined-chipmunk",
-              "discreet-rooster",
-              "easy-going-sauropod",
-              "efficient-chipmunk",
-              "emotional-cricket",
-              "fearless-crab",
-              "hiding-blowfish",
-              "hiding-tiger",
-              "humorous-owl",
-              "impartial-shark",
-              "impartial-shrimp",
-              "independent-shrimp",
-              "joyful-deer",
-              "kind-seashell",
-              "laid-back-lobster",
-              "loyal-parrot",
-              "loyal-squid",
-              "modest-octopus",
-              "naked-microbe",
-              "nice-peacock",
-              "noisy-fish",
-              "noisy-hedgehog",
-              "non-judgemental-eagle",
-              "organized-badger",
-              "organized-cricket",
-              "passionate-t-rex",
-              "pioneering-rhino",
-              "placid-llama",
-              "polite-pig",
-              "powerful-chipmunk",
-              "powerful-fish",
-              "shivering-raccoon",
-              "straightforward-crocodile",
-              "thoughtful-turtle",
-              "wild-whale",
-              "willing-hedgehog"
-            ],
-            "title": "DynamicBioIOModels",
-            "type": "string"
-          },
-          "DynamicallyGeneratedModel": {
-            "description": "Select a model from the PlantSeg Zoo.",
-            "enum": [
-              "generic_confocal_3D_unet",
-              "generic_light_sheet_3D_unet",
-              "confocal_3D_unet_ovules_ds1x",
-              "confocal_3D_unet_ovules_ds2x",
-              "confocal_3D_unet_ovules_ds3x",
-              "confocal_2D_unet_ovules_ds2x",
-              "lightsheet_3D_unet_root_ds1x",
-              "lightsheet_3D_unet_root_ds2x",
-              "lightsheet_3D_unet_root_ds3x",
-              "lightsheet_2D_unet_root_ds1x",
-              "lightsheet_3D_unet_root_nuclei_ds1x",
-              "lightsheet_2D_unet_root_nuclei_ds1x",
-              "confocal_2D_unet_sa_meristem_cells",
-              "confocal_3D_unet_sa_meristem_cells",
-              "lightsheet_3D_unet_mouse_embryo_cells",
-              "confocal_3D_unet_mouse_embryo_nuclei",
-              "PlantSeg_3Dnuc_platinum"
-            ],
-            "title": "DynamicallyGeneratedModel",
-            "type": "string"
-          },
-          "ModelsPool": {
-            "description": "Select if the model is sourced from PlantSegZoo or BioImageIO.",
-            "enum": [
-              "PlantSegZoo",
-              "BioImageIO",
-              "LocalModel"
-            ],
-            "title": "ModelsPool",
-            "type": "string"
-          },
           "PlantSegPredictionsModel": {
             "description": "Input model for PlantSeg predictions.",
             "properties": {
               "model_source": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/ModelsPool"
-                  }
-                ],
                 "default": "PlantSegZoo",
-                "title": "Model_Source",
+                "enum": [
+                  "PlantSegZoo",
+                  "BioImageIO",
+                  "LocalModel"
+                ],
+                "title": "Model Source",
+                "type": "string",
                 "description": "Define which of the following fields to use."
               },
               "plantsegzoo_name": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/DynamicallyGeneratedModel"
-                  }
-                ],
                 "default": "generic_confocal_3D_unet",
-                "title": "Plantsegzoo_Name",
+                "enum": [
+                  "generic_confocal_3D_unet",
+                  "generic_light_sheet_3D_unet",
+                  "confocal_3D_unet_ovules_ds1x",
+                  "confocal_3D_unet_ovules_ds2x",
+                  "confocal_3D_unet_ovules_ds3x",
+                  "confocal_2D_unet_ovules_ds2x",
+                  "lightsheet_3D_unet_root_ds1x",
+                  "lightsheet_3D_unet_root_ds2x",
+                  "lightsheet_3D_unet_root_ds3x",
+                  "lightsheet_2D_unet_root_ds1x",
+                  "lightsheet_3D_unet_root_nuclei_ds1x",
+                  "lightsheet_2D_unet_root_nuclei_ds1x",
+                  "confocal_2D_unet_sa_meristem_cells",
+                  "confocal_3D_unet_sa_meristem_cells",
+                  "lightsheet_3D_unet_mouse_embryo_cells",
+                  "confocal_3D_unet_mouse_embryo_nuclei",
+                  "PlantSeg_3Dnuc_platinum"
+                ],
+                "title": "Plantsegzoo Name",
+                "type": "string",
                 "description": "The model name from the PlantSeg Zoo. This field is only used if model_source is PlantSegZoo."
               },
               "bioimageio_name": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/DynamicBioIOModels"
-                  }
+                "default": "efficient-chipmunk",
+                "enum": [
+                  "efficient-chipmunk",
+                  "emotional-cricket",
+                  "laid-back-lobster",
+                  "loyal-squid",
+                  "noisy-fish",
+                  "passionate-t-rex",
+                  "pioneering-rhino",
+                  "powerful-fish",
+                  "thoughtful-turtle"
                 ],
-                "default": "affable-shark",
-                "title": "Bioimageio_Name",
+                "title": "Bioimageio Name",
+                "type": "string",
                 "description": "The model name from the BioImageIO Zoo. This field is only used if model_source is BioImageIO."
               },
               "local_model_path": {
@@ -635,13 +564,13 @@
                 "description": "The path to the local model. This field is only used if model_source is LocalModel."
               },
               "device": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/Device"
-                  }
-                ],
                 "default": "cuda",
+                "enum": [
+                  "cpu",
+                  "cuda"
+                ],
                 "title": "Device",
+                "type": "string",
                 "description": "The device to use for predictions."
               },
               "patch": {
@@ -747,7 +676,7 @@
             "default": {
               "model_source": "PlantSegZoo",
               "plantsegzoo_name": "generic_confocal_3D_unet",
-              "bioimageio_name": "affable-shark",
+              "bioimageio_name": "efficient-chipmunk",
               "local_model_path": null,
               "device": "cuda",
               "patch": [
