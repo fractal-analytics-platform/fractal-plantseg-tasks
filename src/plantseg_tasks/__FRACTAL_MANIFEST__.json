@@ -739,12 +739,39 @@
             "description": "The name of a roi table to use."
           },
           "prediction_model": {
-            "$ref": "#/$defs/PlantSegPredictionsModel",
+            "allOf": [
+              {
+                "$ref": "#/$defs/PlantSegPredictionsModel"
+              }
+            ],
+            "default": {
+              "model_source": "PlantSegZoo",
+              "plantsegzoo_name": "generic_confocal_3D_unet",
+              "bioimageio_name": "affable-shark",
+              "local_model_path": null,
+              "device": "cuda",
+              "patch": [
+                80,
+                160,
+                160
+              ],
+              "skip": false
+            },
             "title": "Prediction Model",
             "description": "Parameters for the prediction model."
           },
           "segmentation_model": {
-            "$ref": "#/$defs/PlantSegSegmentationModel",
+            "allOf": [
+              {
+                "$ref": "#/$defs/PlantSegSegmentationModel"
+              }
+            ],
+            "default": {
+              "ws_threshold": 0.5,
+              "segmentation_type": "gasp",
+              "beta": 0.6,
+              "post_minsize": 100
+            },
             "title": "Segmentation Model",
             "description": "Parameters for the segmentation model."
           },
@@ -755,9 +782,7 @@
           }
         },
         "required": [
-          "zarr_url",
-          "prediction_model",
-          "segmentation_model"
+          "zarr_url"
         ],
         "type": "object",
         "title": "PlantsegWorkflow"

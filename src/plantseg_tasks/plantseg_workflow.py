@@ -1,10 +1,10 @@
 """PlantSeg Workflow as a Fractal Task."""
 
-from typing import Optional
-
-from pydantic import validate_call
+from typing import Any, Optional
 
 from fractal_tasks_core.utils import logger
+from pydantic import validate_call
+
 from plantseg_tasks.ngio.ngff_image import NgffImage
 from plantseg_tasks.task_utils.process import plantseg_standard_workflow
 from plantseg_tasks.task_utils.ps_workflow_input_models import (
@@ -68,10 +68,10 @@ def plantseg_workflow(
     channel: int = 0,
     level: int = 0,
     table_name: Optional[str] = None,
-    prediction_model: PlantSegPredictionsModel,
-    segmentation_model: PlantSegSegmentationModel,
+    prediction_model: PlantSegPredictionsModel = PlantSegPredictionsModel(),
+    segmentation_model: PlantSegSegmentationModel = PlantSegSegmentationModel(),
     label_name: Optional[str] = None,
-) -> None:
+) -> dict[str, Any]:
     """Full PlantSeg workflow.
 
     This function runs the full PlantSeg workflow on a OME-Zarr file.
@@ -118,4 +118,4 @@ def plantseg_workflow(
 if __name__ == "__main__":
     from fractal_tasks_core.tasks._utils import run_fractal_task
 
-    run_fractal_task(task_function=plantseg_standard_workflow)
+    run_fractal_task(task_function=plantseg_workflow)
