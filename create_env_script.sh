@@ -1,4 +1,4 @@
-VERSION="0.1.0"
+VERSION="v0.1.0"
 COMMMAND="mamba"
 CUDA="CPU" # Available options: 12.1, 11.8 or CPU
 
