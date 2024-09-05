@@ -15,7 +15,7 @@ Collection of Fractal task with the PlantSeg segmentation pipeline.
 * Download the installation script from this repository
 
 ```bash
-curl -o https://raw.githubusercontent.com/fractal-analytics-platform/fractal-plantseg-tasks/main/create_env_script.sh
+curl -O https://raw.githubusercontent.com/fractal-analytics-platform/fractal-plantseg-tasks/main/create_env_script.sh
 ```
 
 * Edit the installation script to set a custom location for the conda environment and for selecting a specific version of the Fractal-PlantSeg-Tasks package

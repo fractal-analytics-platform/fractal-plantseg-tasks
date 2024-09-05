@@ -21,3 +21,7 @@ $COMMMAND run $COMMMAND create --name $ENVNAME \
 
 echo "Installing plantseg-tasks version $VERSION"
 $COMMMAND run --name $ENVNAME pip install git+https://github.com/fractal-analytics-platform/fractal-plantseg-tasks@$VERSION
+
+
+echo "Downloading the __FRACTAL_MANIFEST__.json file file"
+curl -O https://raw.githubusercontent.com/fractal-analytics-platform/fractal-plantseg-tasks/$VERSION/__FRACTAL_MANIFEST__.json
