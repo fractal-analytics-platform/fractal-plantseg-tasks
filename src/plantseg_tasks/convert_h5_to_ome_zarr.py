@@ -85,10 +85,10 @@ def convert_h5_to_ome_zarr(
     new_image_key: Optional[str] = None,
     new_label_key: Optional[str] = None,
     custom_axis: CustomAxisInputModel = Field(
-        title="Custom Axis", default_factory=CustomAxisInputModel
+        title="Custom Axis", default=CustomAxisInputModel()
     ),
     ome_zarr_parameters: OMEZarrBuilderParams = Field(
-        title="OME-Zarr Parameters", default_factory=OMEZarrBuilderParams
+        title="OME-Zarr Parameters", default=OMEZarrBuilderParams()
     ),
 ):
     """H5 to OME-Zarr converter task.
