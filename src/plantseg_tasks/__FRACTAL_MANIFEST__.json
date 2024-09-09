@@ -6,7 +6,7 @@
       "executable_non_parallel": "convert_h5_to_ome_zarr.py",
       "meta_non_parallel": {
         "cpus_per_task": 1,
-        "mem": 4000
+        "mem": 8000
       },
       "args_schema_non_parallel": {
         "$defs": {
@@ -254,7 +254,7 @@
       "executable_non_parallel": "convert_tiff_to_ome_zarr.py",
       "meta_non_parallel": {
         "cpus_per_task": 1,
-        "mem": 4000
+        "mem": 8000
       },
       "args_schema_non_parallel": {
         "$defs": {
@@ -498,7 +498,8 @@
       "executable_parallel": "plantseg_workflow.py",
       "meta_parallel": {
         "cpus_per_task": 1,
-        "mem": 4000
+        "mem": 32000,
+        "needs_gpu": true
       },
       "args_schema_parallel": {
         "$defs": {
@@ -571,7 +572,7 @@
                 ],
                 "title": "Device",
                 "type": "string",
-                "description": "The device to use for predictions."
+                "description": "The device to use. Must be one of 'cpu', 'cuda'."
               },
               "patch": {
                 "default": [
@@ -606,13 +607,15 @@
                 "description": "The threshold for the watershed."
               },
               "segmentation_type": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/SegmentationType"
-                  }
-                ],
                 "default": "gasp",
+                "enum": [
+                  "gasp",
+                  "mutex_ws",
+                  "multicut",
+                  "dt_watershed"
+                ],
                 "title": "Segmentation Method",
+                "type": "string",
                 "description": "The segmentation method to use. Must be one of 'gasp', 'mutex_ws', 'multicut', 'dt_watershed'."
               },
               "beta": {
@@ -630,17 +633,6 @@
             },
             "title": "PlantSegSegmentationModel",
             "type": "object"
-          },
-          "SegmentationType": {
-            "description": "PlantSeg segmentation function to use.",
-            "enum": [
-              "gasp",
-              "mutex_ws",
-              "multicut",
-              "dt_watershed"
-            ],
-            "title": "SegmentationType",
-            "type": "string"
           }
         },
         "additionalProperties": false,

@@ -1,10 +1,9 @@
 """PlantSeg workflow UI input models."""
 
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 from plantseg.models.zoo import model_zoo
 from pydantic import BaseModel, Field
-
 
 DEVICE = Literal["cpu", "cuda"]
 MODEL_POOL = Literal["PlantSegZoo", "BioImageIO", "LocalModel"]
