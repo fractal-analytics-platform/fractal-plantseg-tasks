@@ -1,6 +1,6 @@
-VERSION="v0.1.0"
+VERSION="0.1.2"
 COMMMAND="mamba"
-CUDA="12.1" # Available options: 12.1, 11.8 or CPU
+CUDA="11.8" # Available options: 12.1, 11.8 or CPU
 # If ENVPREFIX is not NULL, the environment will be created with the prefix $ENVPREFIX/$ENVNAME 
 # If ENVPREFIX is NULL, the environment will be created in the default location
 ENVPREFIX="NULL" 
