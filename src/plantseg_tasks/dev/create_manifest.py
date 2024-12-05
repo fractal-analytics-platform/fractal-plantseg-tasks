@@ -33,4 +33,7 @@ custom_pydantic_models = [
 ]
 if __name__ == "__main__":
     PACKAGE = "plantseg_tasks"
-    create_manifest(package=PACKAGE, custom_pydantic_models=custom_pydantic_models)
+    AUTHORS = "Lorenzo Cerrone"
+    create_manifest(
+        package=PACKAGE, authors=AUTHORS, custom_pydantic_models=custom_pydantic_models
+    )
