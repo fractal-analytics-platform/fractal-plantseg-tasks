@@ -30,7 +30,7 @@ $COMMMAND run $COMMMAND create $LOCATION \
                                --no-channel-priority -y
 
 echo "Installing plantseg-tasks version $VERSION"
-$COMMMAND run --name $ENVNAME pip install git+https://github.com/fractal-analytics-platform/fractal-plantseg-tasks@$VERSION
+$COMMMAND run $LOCATION pip install git+https://github.com/fractal-analytics-platform/fractal-plantseg-tasks@$VERSION
 
 
 echo "Downloading the __FRACTAL_MANIFEST__.json file file"
