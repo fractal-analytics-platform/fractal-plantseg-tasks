@@ -304,13 +304,16 @@ def correct_image_metadata(image: Image, custom_axis: CustomAxisInputModel) -> I
             "Please provide a valid voxel size for axis X and Y."
         )
 
-    label = Label(
-        label_key=image.label.label_key,
-        label_data=image.label.label_data,
-        voxel_size=voxel_size,
-        unit=custom_axis.unit,
-        layout=image.input_layout,
-    )
+    if image.label is not None:
+        label = Label(
+            label_key=image.label.label_key,
+            label_data=image.label.label_data,
+            voxel_size=voxel_size,
+            unit=custom_axis.unit,
+            layout=image.input_layout,
+        )
+    else:
+        label = None
 
     return Image(
         image_key=image.image_key,

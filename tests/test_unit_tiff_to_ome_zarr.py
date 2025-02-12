@@ -45,5 +45,18 @@ class TestTiffToOmeZarr:
         zarr_url = image_list_update["image_list_updates"][0]["zarr_url"]
         assert Path(zarr_url).exists()
         load_NgffImageMeta(zarr_url)
+        # TODO add proper validation with ngio
+        image_list_update = convert_tiff_to_ome_zarr(
+            zarr_urls=[],
+            zarr_dir=zarr_dir,
+            image_path=image_path,
+            label_path=None,
+            new_image_key="raw",
+            new_label_key="",
+            image_layout="ZYX",
+        )
 
+        zarr_url = image_list_update["image_list_updates"][0]["zarr_url"]
+        assert Path(zarr_url).exists()
+        load_NgffImageMeta(zarr_url)
         # TODO add proper validation with ngio
