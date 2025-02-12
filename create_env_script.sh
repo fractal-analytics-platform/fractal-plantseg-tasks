@@ -1,4 +1,4 @@
-VERSION="0.1.2"
+VERSION="0.1.3"
 COMMMAND="mamba"
 CUDA="11.8" # Available options: 12.1, 11.8 or CPU
 # If ENVPREFIX is not NULL, the environment will be created with the prefix $ENVPREFIX/$ENVNAME 
