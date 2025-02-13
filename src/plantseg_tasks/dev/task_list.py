@@ -7,15 +7,24 @@ TASK_LIST = [
         name="Convert H5 to OME-Zarr",
         executable="convert_h5_to_ome_zarr.py",
         meta={"cpus_per_task": 1, "mem": 8000},
+        category="Conversion",
+        tags=["H5", "HDF5"],
     ),
     NonParallelTask(
         name="Convert Tiff to OME-Zarr",
         executable="convert_tiff_to_ome_zarr.py",
         meta={"cpus_per_task": 1, "mem": 8000},
+        category="Conversion",
     ),
     ParallelTask(
         name="PlantSeg Segmentation",
         executable="plantseg_workflow.py",
         meta={"cpus_per_task": 1, "mem": 32000, "needs_gpu": True},
+        category="Segmentation",
+        tags=[
+            "Neural Network Segmentation",
+            "Deep Learning",
+            "Instance Segmentation",
+        ],
     ),
 ]

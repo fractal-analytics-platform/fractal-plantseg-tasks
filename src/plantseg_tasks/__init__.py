@@ -1,4 +1,4 @@
-"""Package description."""
+"""A collection of fractal tasks to run plantseg workflows."""
 
 from importlib.metadata import PackageNotFoundError, version
 

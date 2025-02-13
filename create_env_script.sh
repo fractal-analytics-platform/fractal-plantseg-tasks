@@ -34,4 +34,4 @@ $COMMMAND run $LOCATION pip install git+https://github.com/fractal-analytics-pla
 
 
 echo "Downloading the __FRACTAL_MANIFEST__.json file file"
-curl -O https://raw.githubusercontent.com/fractal-analytics-platform/fractal-plantseg-tasks/$VERSION/__FRACTAL_MANIFEST__.json
+curl -O https://raw.githubusercontent.com/fractal-analytics-platform/fractal-plantseg-tasks/$VERSION/src/plantseg_tasks/__FRACTAL_MANIFEST__.json
